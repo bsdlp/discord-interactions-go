@@ -58,6 +58,6 @@ type Data struct {
 
 type ApplicationCommandInteractionDataOption struct {
 	Name    string                                    `json:"name"`
-	Value   string                                    `json:"value,omitempty"`
+	Value   interface{}                               `json:"value,omitempty"`
 	Options []ApplicationCommandInteractionDataOption `json:"options,omitempty"`
 }

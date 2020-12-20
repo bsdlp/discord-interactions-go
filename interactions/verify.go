@@ -2,7 +2,6 @@ package interactions
 
 import (
 	"bytes"
-	"context"
 	"crypto/ed25519"
 	"encoding/hex"
 	"io"
@@ -15,7 +14,7 @@ import (
 // Verify implements the verification side of the discord interactions api
 // signing algorithm, as documented here:
 // https://discord.com/developers/docs/interactions/slash-commands#security-and-authorization
-func Verify(ctx context.Context, r *http.Request, key ed25519.PublicKey) bool {
+func Verify(r *http.Request, key ed25519.PublicKey) bool {
 	var payloadBuffer bytes.Buffer
 
 	signature := r.Header.Get("X-Signature-Ed25519")

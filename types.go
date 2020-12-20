@@ -49,12 +49,15 @@ type Data struct {
 	ID      string `json:"id"`
 	GuildID string `json:"guild_id"`
 	Data    struct {
-		Options []struct {
-			Name  string `json:"name"`
-			Value string `json:"value"`
-		} `json:"options"`
-		Name string `json:"name"`
-		ID   string `json:"id"`
+		Options []ApplicationCommandInteractionDataOption `json:"options"`
+		Name    string                                    `json:"name"`
+		ID      string                                    `json:"id"`
 	} `json:"data"`
 	ChannelID string `json:"channel_id"`
+}
+
+type ApplicationCommandInteractionDataOption struct {
+	Name    string                                    `json:"name"`
+	Value   string                                    `json:"value,omitempty"`
+	Options []ApplicationCommandInteractionDataOption `json:"options,omitempty"`
 }

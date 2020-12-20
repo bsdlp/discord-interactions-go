@@ -8,27 +8,9 @@ import (
 	"io"
 	"io/ioutil"
 	"net/http"
-	"strconv"
+
+	"github.com/kevinburke/nacl/sign"
 )
-
-const (
-	publicKeySize = 32
-	signatureSize = 64
-)
-
-func verify(sig []byte, key ed25519.PublicKey) bool {
-	if l := len(key); l != publicKeySize {
-		panic("sign: bad public key length: " + strconv.Itoa(l))
-	}
-
-	if len(sig) < signatureSize || sig[63]&224 != 0 {
-		return false
-	}
-	msg := sig[signatureSize:]
-	sig = sig[:signatureSize]
-
-	return ed25519.Verify(ed25519.PublicKey(key), msg, sig)
-}
 
 // Verify implements the verification side of the discord interactions api
 // signing algorithm, as documented here:
@@ -68,5 +50,5 @@ func Verify(ctx context.Context, r *http.Request, key ed25519.PublicKey) bool {
 		return false
 	}
 
-	return verify(payloadBuffer.Bytes(), key)
+	return sign.Verify(payloadBuffer.Bytes(), sign.PublicKey(key))
 }

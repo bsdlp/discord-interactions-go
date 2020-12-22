@@ -7,15 +7,13 @@ import (
 	"io"
 	"io/ioutil"
 	"net/http"
-
-	"github.com/kevinburke/nacl/sign"
 )
 
 // Verify implements the verification side of the discord interactions api
 // signing algorithm, as documented here:
 // https://discord.com/developers/docs/interactions/slash-commands#security-and-authorization
 func Verify(r *http.Request, key ed25519.PublicKey) bool {
-	var payloadBuffer bytes.Buffer
+	var msg bytes.Buffer
 
 	signature := r.Header.Get("X-Signature-Ed25519")
 	if signature == "" {
@@ -26,14 +24,17 @@ func Verify(r *http.Request, key ed25519.PublicKey) bool {
 	if err != nil {
 		return false
 	}
-	payloadBuffer.Write(sig)
+
+	if len(sig) != ed25519.SignatureSize || sig[63]&224 != 0 {
+		return false
+	}
 
 	timestamp := r.Header.Get("X-Signature-Timestamp")
 	if timestamp == "" {
 		return false
 	}
 
-	payloadBuffer.WriteString(timestamp)
+	msg.WriteString(timestamp)
 
 	defer r.Body.Close()
 	var body bytes.Buffer
@@ -44,10 +45,10 @@ func Verify(r *http.Request, key ed25519.PublicKey) bool {
 	}()
 
 	// copy body into buffers
-	_, err = io.Copy(&payloadBuffer, io.TeeReader(r.Body, &body))
+	_, err = io.Copy(&msg, io.TeeReader(r.Body, &body))
 	if err != nil {
 		return false
 	}
 
-	return sign.Verify(payloadBuffer.Bytes(), sign.PublicKey(key))
+	return ed25519.Verify(key, msg.Bytes(), sig)
 }

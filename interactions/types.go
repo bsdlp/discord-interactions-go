@@ -1,10 +1,9 @@
 package interactions
 
 import (
+	"encoding/json"
 	"fmt"
 	"time"
-
-	"github.com/bwmarrin/discordgo"
 )
 
 type InteractionType int
@@ -77,8 +76,8 @@ type InteractionResponse struct {
 }
 
 type InteractionApplicationCommandCallbackData struct {
-	TTS             *bool                             `json:"tts,omitempty"`
-	Content         string                            `json:"content"`
-	Embeds          []*discordgo.MessageEmbed         `json:"embeds,omitempty"`
-	AllowedMentions *discordgo.MessageAllowedMentions `json:"allowed_mentions,omitempty"`
+	TTS             *bool            `json:"tts,omitempty"`
+	Content         string           `json:"content"`
+	Embeds          json.Unmarshaler `json:"embeds,omitempty"`
+	AllowedMentions json.Unmarshaler `json:"allowed_mentions,omitempty"`
 }

@@ -76,8 +76,9 @@ type InteractionResponse struct {
 }
 
 type InteractionApplicationCommandCallbackData struct {
-	TTS             *bool            `json:"tts,omitempty"`
-	Content         string           `json:"content"`
-	Embeds          json.Unmarshaler `json:"embeds,omitempty"`
-	AllowedMentions json.Unmarshaler `json:"allowed_mentions,omitempty"`
+	TTS             *bool                    `json:"tts,omitempty"`
+	Content         string                   `json:"content"`
+	Embeds          json.Unmarshaler         `json:"embeds,omitempty"`
+	AllowedMentions json.Unmarshaler         `json:"allowed_mentions,omitempty"`
+	Flags           InteractionResponseFlags `json:"flags,omitempty"`
 }
